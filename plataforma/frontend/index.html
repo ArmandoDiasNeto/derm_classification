@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resposta da API:</title>
+  <style>
+    /* Estilos para o modal */
+    #simpleModal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background: #f4f4f4; /* Cinza claro */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      text-align: center;
+      line-height: 1.5; /* Espaçamento entre linhas */
+    }
+
+    #modalContent {
+      text-align: center;
+      margin-bottom: 15px; 
+      /*font-weight: bold;   /* Texto em negrito */
+      font-size: 1.5em;  
+    }
+
+    #closeBtn {
+      cursor: pointer;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
 <head> 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -338,7 +376,8 @@
                         <div class="js--image-preview2"></div>
                         <div class="upload-options2">
                           <label>
-                            <input id="img-dicom" type="file" class="image-upload" accept=".png, .jpg"  />
+                            <!-- <input id="img-dicom" type="file" class="image-upload" accept=".png, .jpg"  /> -->
+                            <input type="file" id="fileInput" name="file" accept=".jpg, .jpeg">
                           </label>
                         </div>
                       </div>
@@ -346,11 +385,53 @@
                   </div>
  
                   <div class="row" style="margin-top: 30px;">
-                    <button type="button" id="processaBtn" class="btn btn-primary" style="color:white !important;">
+                    <!--<button type="button" id="processaBtn" class="btn btn-primary" style="color:white !important;"> -->
+                    <button type="button" onclick="uploadFile()">Enviar</button>
                       <!-- <button type="button" id="processaBtn" class="btn btn-primary" onclick="envia_exam(this);" > -->
-                      Enviar
+                      <!--Enviar-->
                     </button>
                   </div>
+
+                  <!-- Modal HTML -->
+                  <div id="simpleModal">
+                    <div id="modalContent"></div>
+                    <button id="closeBtn" onclick="closeModal()">Fechar</button>
+                  </div>
+
+                  <script>
+                    function uploadFile() {
+                        var fileInput = document.getElementById('fileInput');
+                        
+                        if (fileInput.files.length > 0) {
+                            var formData = new FormData();
+                            formData.append('file', fileInput.files[0]);
+            
+                            fetch('http://127.0.0.1:5000/', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                              // Exibe a resposta da API no modal
+                              var modalContent = document.getElementById('modalContent');
+                              //modalContent.innerHTML = 'SKIN LESION DETECTION: ' + data.message;
+                              modalContent.innerHTML = data.message;
+
+                              // Abre o modal
+                              document.getElementById('simpleModal').style.display = 'block';
+                            })
+                            .catch(error => {
+                                console.error('Erro ao enviar o arquivo:', error);
+                            });
+                        } else {
+                            alert('Selecione um arquivo para enviar.');
+                        }
+                    }
+                    function closeModal() {
+                      // Fecha o modal
+                      document.getElementById('simpleModal').style.display = 'none';
+                    }
+                </script>
 
               </div> 
 
