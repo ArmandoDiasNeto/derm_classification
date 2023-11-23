@@ -8,7 +8,6 @@ import os
 #import tensorflow as tf
 from flask_cors import CORS
 
-
 home_path = os.path.dirname(os.path.realpath(__file__))
 model_dir=os.path.join(home_path, 'models', 'fitzpatrick_ddi_pad_v1')
 print('model_dir ', model_dir)
